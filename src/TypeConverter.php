@@ -49,9 +49,12 @@ class TypeConverter
         return $converter->convert($source);
     }
 
-    public function registerConverter($source, $target, ConverterInterface $converter)
+    /**
+     * @param ConverterInterface $converter
+     */
+    public function registerConverter(ConverterInterface $converter)
     {
-        $this->convertersContainer->addConverter($source, $target, $converter);
+        $this->convertersContainer->addConverter($converter);
     }
 
     /**

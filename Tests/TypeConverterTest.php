@@ -14,14 +14,73 @@ class TypeConverterTest extends TestCase
     /** @var TypeConverter */
     private static $typeConverter;
 
-    public static function setUpBeforeClass()
+    private function setUpConverter()
     {
         self::$typeConverter = new TypeConverter();
-        self::$typeConverter->registerConverter(Fullname::class, BarClass::class, new FullnameToBarConverter());
+
+        self::$typeConverter->registerConverter(new FullnameToBarConverter());
+    }
+
+    private function setUpAutoMapConverterStrictMode()
+    {
+        self::$typeConverter = new TypeConverter();
+
+        self::$typeConverter->registerConverter(
+            (new FullnameToBarConverter())->setAutoMapping(true)
+        );
+    }
+
+    private function setUpAutoMapConverter()
+    {
+        self::$typeConverter = new TypeConverter();
+
+        self::$typeConverter->registerConverter(
+            (new FullnameToBarConverter())->setAutoMapping(true)->setStrictMode(false)
+        );
     }
 
     public function testConvertFullnameToBar()
     {
+        $this->setUpConverter();
+
+        $firstname = 'firstname';
+        $someValue = 'someValue';
+
+        $fullname = (new Fullname())
+            ->setFirstname($firstname)
+            ->setSomeProperty($someValue)
+        ;
+
+        $convertedValue = self::$typeConverter->convert($fullname, BarClass::class);
+
+        $this->assertInstanceOf(BarClass::class, $convertedValue);
+
+        $this->assertAttributeEquals($firstname, 'a', $convertedValue);
+        $this->assertAttributeEquals(null, 'someProperty', $convertedValue);
+    }
+
+    /**
+     * @expectedException Ivanche\Exception\UnsupportedSourcePropertyException
+     */
+    public function testConvertFullnameToBarAutoMappingStrictMode()
+    {
+        $this->setUpAutoMapConverterStrictMode();
+
+        $firstname = 'firstname';
+        $someValue = 'someValue';
+
+        $fullname = (new Fullname())
+            ->setFirstname($firstname)
+            ->setSomeProperty($someValue)
+        ;
+
+        self::$typeConverter->convert($fullname, BarClass::class);
+    }
+
+    public function testConvertFullnameToBarAutoMapping()
+    {
+        $this->setUpAutoMapConverter();
+
         $firstname = 'firstname';
         $someValue = 'someValue';
 

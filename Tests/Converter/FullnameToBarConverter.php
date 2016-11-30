@@ -13,19 +13,26 @@ use Ivanche\Tests\DummyClasses\Fullname;
 
 class FullnameToBarConverter extends AbstractConverter
 {
+    public function __construct()
+    {
+        $this->sourceType = Fullname::class;
+        $this->targetType = BarClass::class;
+    }
+
     /**
      * @inheritDoc
      * @param Fullname $source
+     * @param BarClass $autoMappedTargetObject
      */
-    public function convert($source)
+    public function explicitConvert($source, $autoMappedTargetObject = null)
     {
-        if (!$source instanceof Fullname) {
-            throw new UnsupportedSourceException();
+        if ($autoMappedTargetObject !== null) {
+            $bar = $autoMappedTargetObject;
+        } else {
+            $bar = new BarClass();
         }
 
-        $bar = new BarClass();
         $bar
-            ->setSomeProperty($source->getSomeProperty())
             ->setA($source->getFirstname())
         ;
 

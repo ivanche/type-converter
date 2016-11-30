@@ -17,7 +17,7 @@ class ConvertersContainerTest extends TestCase
 
         $this->assertNull($convertersContainer->getConverter(Fullname::class, BarClass::class));
 
-        $convertersContainer->addConverter(Fullname::class, BarClass::class, new FullnameToBarConverter());
+        $convertersContainer->addConverter(new FullnameToBarConverter());
 
         $this->assertInstanceOf(FullnameToBarConverter::class,
             $convertersContainer->getConverter(Fullname::class, BarClass::class));
@@ -29,7 +29,7 @@ class ConvertersContainerTest extends TestCase
 
         $this->assertNull($convertersContainer->getConverter(Fullname::class, BarClass::class));
 
-        $convertersContainer->addConverter(Fullname::class, BarClass::class, (new FullnameToBarConverter()));
+        $convertersContainer->addConverter(new FullnameToBarConverter());
 
         $this->assertInstanceOf(FullnameToBarConverter::class,
             $convertersContainer->getConverter(new Fullname(), BarClass::class));

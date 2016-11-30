@@ -17,13 +17,11 @@ class ConvertersContainer
     private $converters = [];
 
     /**
-     * @param mixed $source
-     * @param string $target
      * @param ConverterInterface $converter
      */
-    public function addConverter($source, $target, ConverterInterface $converter)
+    public function addConverter(ConverterInterface $converter)
     {
-        $converterId = $this->createConverterId($source, $target);
+        $converterId = $this->createConverterId($converter->getSourceType(), $converter->getTargetType());
         $this->converters[$converterId] = $converter;
     }
 
@@ -57,7 +55,7 @@ class ConvertersContainer
                 $converter = $this->getConverter($s, $t);
 
                 if ($converter !== null) {
-                    $this->addConverter($s, $t, $converter);
+                    $this->addConverter($converter);
                     return $converter;
                 }
             }
